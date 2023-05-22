@@ -1,5 +1,14 @@
 program lab10;
 
+{
+  File F1 contains arbitrary text. Words in the text are separated by spaces
+  and punctuation marks. File F2 contains up to 40 words, separated by commas.
+  These words form pairs: each first word is considered replaceable, and each
+  second word is considered its replacement. Find all replaceable words in file
+  F1 and replace them with their corresponding replacements. Write the result to
+  file G.
+}
+
 {$APPTYPE CONSOLE}
 
 uses
@@ -19,6 +28,16 @@ var
   Line, GLine, Word: string;
   ReplaceWords: TReplaceWordsArray;
   i, Index, WordsAmount: Integer;
+  // F1, F2, G - varaibles for needed files
+  // Line - single sile of the file
+  // Word - single word of the file
+  // ReplaceWords - array of array of string that in first columns contains
+  //                word that need to replace and in the second - word
+  //                to replace the first word
+  // i - iterator for cycles
+  // Index - index of element found by binary search
+  // WordsAmount - amount pairs of words that need to replce
+
 
 // Procedure for sorting elements lexicographically by first elements
 procedure QuickSort(var AArray: TReplaceWordsArray; ALeft, ARight: Integer);

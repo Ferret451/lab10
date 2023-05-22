@@ -16,9 +16,19 @@ type
 
 var
   F1, F2, G: TextFile;
-  Line, GLine, Word, Cases: string;
+  Line, GLine, Word: string;
   ReplaceWords: TReplaceWordsArray;
   i, Index, WordsAmount: Integer;
+  // F1, F2, G - varaibles for needed files
+  // Line - single sile of the file
+  // Word - single word of the file
+  // ReplaceWords - array of array of string that in first columns contains
+  //                word that need to replace and in the second - word
+  //                to replace the first word
+  // i - iterator for cycles
+  // Index - index of element found by binary search
+  // WordsAmount - amount pairs of words that need to replce
+
 
 // Procedure for sorting elements lexicographically by first elements
 procedure QuickSort(var AArray: TReplaceWordsArray; ALeft, ARight: Integer);
@@ -63,34 +73,17 @@ var
 begin
   Result := -1;
 
-  while ALeft <= ARight do
+  while (ALeft <= ARight) and (Result = -1) do
   begin
     Mid := (ALeft + ARight) div 2;
 
-    if (AArray[Mid][1] = AValue) and ((Mid = 1) or (AArray[Mid - 1][1] <> AValue)) then
-    begin
-      Result := Mid;
-      Exit;
-    end
+    if (AArray[Mid][1] = AValue) then
+      Result := Mid
     else
       if AArray[Mid][1] < AValue then
         ALeft := Mid + 1
       else
         ARight := Mid - 1;
-  end;
-end;
-
-// Function to form string considering cases
-function FormStringWithCases(const AString, ACases: string): string;
-var
-  i: Integer;
-begin
-  for i := 1 to Length(AString) do
-  begin
-    if ACases = '0' then
-      Result := Result + LowerCase(AString[i])
-    else
-      Result := Result + UpperCase(AString[i])
   end;
 end;
 
@@ -123,9 +116,8 @@ begin
         if Word <> '' then
         begin
           // Writing found word in raplacement array considering
-          // place of element
+          // place in array for new element
           inc(WordsAmount);
-          Word := LowerCase(Word);
           if WordsAmount mod 2 <> 0 then
             ReplaceWords[WordsAmount div 2 + WordsAmount mod 2][1] := Word
           else
@@ -149,35 +141,27 @@ begin
     // Assigning starting values
     GLine := '';
     Word := '';
-    Cases := '';
     i := 1;
     while i <= Length(Line) do
     begin
       if Line[i] in AvailableWordSymbols then
       begin
-        // Forming word and remembering cases of letters
+        // Forming word
         Word := Word + Line[i];
-
-        if Line[i] in LowerCaseWordSymbols then
-          Cases := Cases + '0'
-        else
-          Cases := Cases + '1';
       end
       else
       begin
         if Word <> '' then
         begin
           // Trying to find word in replacement array and
-          // forming line for G file considering cases of letters
-          Word := LowerCase(Word);
+          // forming line for G file
           Index := BinarySearchFirst(ReplaceWords, Low(ReplaceWords),
             WordsAmount div 2, Word);
           if Index <> -1 then
-            GLine := GLine + FormStringWithCases(ReplaceWords[Index][2], Cases)
+            GLine := GLine + ReplaceWords[Index][2]
           else
             GLine := GLine + Word;
           Word := '';
-          Cases := '';
         end;
 
         GLine := GLine + Line[i];
