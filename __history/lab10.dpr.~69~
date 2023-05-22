@@ -16,7 +16,7 @@ type
 
 var
   F1, F2, G: TextFile;
-  Line, GLine, Word: string;
+  Line, GLine, Word, Cases: string;
   ReplaceWords: TReplaceWordsArray;
   i, Index, WordsAmount: Integer;
 
@@ -131,27 +131,34 @@ begin
     // Assigning starting values
     GLine := '';
     Word := '';
+    Cases := '';
     i := 1;
     while i <= Length(Line) do
     begin
       if Line[i] in AvailableWordSymbols then
       begin
-        // Forming word
+        // Forming word and remembering cases of letters
         Word := Word + Line[i];
+
+        if Line[i] in LowerCaseWordSymbols then
+          Cases := Cases + '0'
+        else
+          Cases := Cases + '1';
       end
       else
       begin
         if Word <> '' then
         begin
           // Trying to find word in replacement array and
-          // forming line for G file
+          // forming line for G file considering cases of letters
           Index := BinarySearchFirst(ReplaceWords, Low(ReplaceWords),
             WordsAmount div 2, Word);
           if Index <> -1 then
-            GLine := GLine + ReplaceWords[Index][2]
+            GLine := GLine + FormStringWithCases(ReplaceWords[Index][2], Cases)
           else
             GLine := GLine + Word;
           Word := '';
+          Cases := '';
         end;
 
         GLine := GLine + Line[i];

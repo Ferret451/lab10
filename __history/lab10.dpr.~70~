@@ -131,13 +131,19 @@ begin
     // Assigning starting values
     GLine := '';
     Word := '';
+    Cases := '';
     i := 1;
     while i <= Length(Line) do
     begin
       if Line[i] in AvailableWordSymbols then
       begin
-        // Forming word
+        // Forming word and remembering cases of letters
         Word := Word + Line[i];
+
+        if Line[i] in LowerCaseWordSymbols then
+          Cases := Cases + '0'
+        else
+          Cases := Cases + '1';
       end
       else
       begin
@@ -152,6 +158,7 @@ begin
           else
             GLine := GLine + Word;
           Word := '';
+          Cases := '';
         end;
 
         GLine := GLine + Line[i];
